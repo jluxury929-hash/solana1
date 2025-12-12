@@ -38,7 +38,7 @@ export class SolanaJitoExecutor {
     ): Promise<SolanaJitoExecutor> {
         const connection = new Connection(solanaRpcUrl, 'confirmed');
         
-        // FIX: Using the more robust constructor pattern for SearcherClient (TS2351 fix)
+        // FIX: Using the explicit constructor pattern for SearcherClient (TS2351 fix)
         const searcherClient = new SearcherClient({ 
             privateKey: walletKeypair.secretKey, 
             baseEngineUrl: jitoRelayUrl 
