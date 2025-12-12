@@ -4,14 +4,14 @@
     "moduleResolution": "NodeNext",
     "target": "ES2022",
     "outDir": "./dist",
-    "rootDir": "./src", // CRITICAL: Assuming all source files are here
+    "rootDir": "./", // FIX: Change rootDir from "./src" back to "./"
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true, 
     "allowJs": true,
     "sourceMap": true
   },
-  "include": ["src/**/*.ts"], // Only include TS files inside src/
+  "include": ["**/*.ts"], // FIX: Look for all .ts files in all directories
   "exclude": ["node_modules", "dist"]
 }
