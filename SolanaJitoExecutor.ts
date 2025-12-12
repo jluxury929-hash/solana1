@@ -1,4 +1,4 @@
-// SolanaJitoExecutor.ts
+// SolanaJitoExecutor.ts (Fixing Jito Conflicts)
 
 import {
     Connection,
@@ -7,13 +7,13 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    // FIX: Use 'bundle' and rename it to 'Bundle' (TS2724 fix)
+    // FIX: Trusting the compiler suggestion for Bundle, and using standard names
     bundle as Bundle, 
     SearcherClient, 
     BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
+import { ChainConfig } from './config/chains.js'; 
 
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
 
@@ -39,7 +39,7 @@ export class SolanaJitoExecutor {
     ): Promise<SolanaJitoExecutor> {
         const connection = new Connection(solanaRpcUrl, 'confirmed');
         
-        // FIX: Using the explicit constructor pattern that resolved TS2351
+        // FIX for TS2351: Using the explicit constructor object pattern
         const searcherClient = new SearcherClient({ 
             privateKey: walletKeypair.secretKey, 
             baseEngineUrl: jitoRelayUrl 
@@ -53,6 +53,7 @@ export class SolanaJitoExecutor {
     ): Promise<void> {
         logger.info(`[JITO] Submitting bundle with ${transactions.length} transactions...`);
 
+        // FIX: The compiler suggested 'bundle' but the class must be named Bundle
         const bundle = new Bundle(transactions, JITO_TIP_ACCOUNT); 
         
         try {
