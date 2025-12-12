@@ -39,7 +39,6 @@ export class JitoMEVExecutor {
 
         logger.info(`[EVM] Jito Executor created for ${rpcUrl}`);
         
-        // Must return the instance
         return new JitoMEVExecutor(provider, walletSigner, searcherClient); 
     }
     
