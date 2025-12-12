@@ -54,7 +54,7 @@ export class FlashbotsMEVExecutor {
                 blockNumber
             );
             
-            // FIX: Correct usage of the wait method on the submission object
+            // FIX for TS2339: Correct usage of the wait method on the submission object
             const resolution = await submission.wait(); 
 
             if (resolution === FlashbotsBundleResolution.BundleIncluded) {
