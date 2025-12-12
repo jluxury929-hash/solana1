@@ -1,23 +1,17 @@
+// tsconfig.json (Simplified and Cleaned)
 {
   "compilerOptions": {
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "NodeNext", // This should handle external packages
     "target": "ES2022",
-    
     "outDir": "./dist",
     "rootDir": "./",
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
     "allowJs": true,
-    
-    // CRITICAL FIX: BaseUrl and Paths to force-resolve stubborn external packages
-    "baseUrl": ".", 
-    "paths": {
-      // These are crucial for fixing TS2307 for external EVM modules
-      "ethers": ["./node_modules/ethers/lib/index.d.ts"],
-      "@flashbots/ethers-provider-bundle": ["./node_modules/@flashbots/ethers-provider-bundle/dist/index.d.ts"]
-    }
+    // Removed 'paths' which were causing conflicts
+    "forceConsistentCasingInFileNames": true 
   },
   "include": ["**/*.ts"], 
   "exclude": ["node_modules", "dist"] 
