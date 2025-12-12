@@ -4,7 +4,7 @@
     "moduleResolution": "NodeNext",
     "target": "ES2022",
     "outDir": "./dist",
-    "rootDir": "./src", 
+    "rootDir": "./", // FIX: Use the container root as the source root
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,6 +12,7 @@
     "allowJs": true,
     "sourceMap": true
   },
-  "include": ["src/**/*.ts"], 
+  // FIX: Look in all subdirectories, including src/
+  "include": ["**/*.ts"], 
   "exclude": ["node_modules", "dist"]
 }
