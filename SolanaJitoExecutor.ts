@@ -13,7 +13,7 @@ import {
     BASE_TIP_ADDRESS, // FIX: Explicitly importing constant
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; // FIX: Explicit .js extension
+import { ChainConfig } from './config/chains.js'; // FIX: Explicit .js extension (TS2307)
 
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
 
