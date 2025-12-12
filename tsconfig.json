@@ -1,16 +1,14 @@
-// tsconfig.json (Simplified and Cleaned)
 {
   "compilerOptions": {
     "module": "NodeNext",
-    "moduleResolution": "NodeNext", // This should handle external packages
+    "moduleResolution": "NodeNext", 
     "target": "ES2022",
     "outDir": "./dist",
     "rootDir": "./",
     "esModuleInterop": true,
     "strict": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true, // Critical for bypassing issues with installed types like 'ethers'
     "allowJs": true,
-    // Removed 'paths' which were causing conflicts
     "forceConsistentCasingInFileNames": true 
   },
   "include": ["**/*.ts"], 
