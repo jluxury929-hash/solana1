@@ -7,12 +7,13 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    bundle as Bundle, // FIX: Using 'bundle as Bundle' to bypass TS2724
+    // FIX: Using 'bundle as Bundle' to bypass TS2724
+    bundle as Bundle, 
     SearcherClient, 
     BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
+import { ChainConfig } from './config/chains.js'; // Ensure .js extension is used
 
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
 
