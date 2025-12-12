@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "module": "CommonJS", // CHANGE: Use CommonJS module system
-    "moduleResolution": "Node", // CHANGE: Use stable Node resolution
+    "module": "CommonJS",
+    "moduleResolution": "Node", 
     "target": "ES2022",
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./src", // FIX: Sets the source root to the src folder
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,6 +12,6 @@
     "allowJs": true,
     "sourceMap": false
   },
-  "include": ["**/*.ts"], 
+  "include": ["src/**/*.ts"], // FIX: Only includes files within the src folder
   "exclude": ["node_modules", "dist"]
 }
