@@ -1,18 +1,18 @@
 // FlashbotsMEVExecutor.ts
 
 import { FlashbotsBundleProvider } from '@flashbots/ethers-provider-bundle';
-import { providers, Wallet, TransactionRequest, BigNumber } from 'ethers'; 
+import * as ethers from 'ethers'; // FIX: Using import * as to resolve TS2307 for external package
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
+import { ChainConfig } from './config/chains.js';
 
 export class FlashbotsMEVExecutor {
-    private provider: providers.JsonRpcProvider;
-    private walletSigner: Wallet;
+    private provider: ethers.providers.JsonRpcProvider;
+    private walletSigner: ethers.Wallet;
     private flashbotsProvider: FlashbotsBundleProvider;
 
     private constructor(
-        provider: providers.JsonRpcProvider,
-        walletSigner: Wallet,
+        provider: ethers.providers.JsonRpcProvider,
+        walletSigner: ethers.Wallet,
         flashbotsProvider: FlashbotsBundleProvider
     ) {
         this.provider = provider;
@@ -26,9 +26,10 @@ export class FlashbotsMEVExecutor {
         rpcUrl: string,
         flashbotsUrl: string
     ): Promise<FlashbotsMEVExecutor> {
-        const provider = new providers.JsonRpcProvider(rpcUrl);
-        const walletSigner = new Wallet(walletPrivateKey, provider);
-        const authSigner = new Wallet(authPrivateKey);
+        // FIX: Must use 'ethers.' prefix due to 'import * as ethers'
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl); 
+        const walletSigner = new ethers.Wallet(walletPrivateKey, provider);
+        const authSigner = new ethers.Wallet(authPrivateKey);
 
         const flashbotsProvider = await FlashbotsBundleProvider.create(
             provider,
