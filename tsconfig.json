@@ -8,7 +8,7 @@
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true, // CRITICAL: Bypasses TS2307 for external library types (ethers)
+    "skipLibCheck": true,
     "allowJs": true,
     "sourceMap": true
   },
