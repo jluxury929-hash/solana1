@@ -1,26 +1,17 @@
 {
   "compilerOptions": {
-    /* Project Options */
-    "target": "es2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "CommonJS", // CHANGE: Use CommonJS module system
+    "moduleResolution": "Node", // CHANGE: Use stable Node resolution
+    "target": "ES2022",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "outDir": "./dist",
-    "rootDir": ".",    
-    /* Type Checking */
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    /* Other */
+    "skipLibCheck": true, 
+    "allowJs": true,
     "sourceMap": false
   },
-  "include": [
-    "**/*.ts"          
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["**/*.ts"], 
+  "exclude": ["node_modules", "dist"]
 }
