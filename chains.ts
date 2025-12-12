@@ -1,6 +1,6 @@
 // config/chains.ts
 
-interface ChainConfig {
+export interface ChainConfig {
     chainId: number;
     name: string;
     httpUrl: string;
@@ -23,7 +23,5 @@ export const CHAINS: ChainConfig[] = [
         wssUrl: process.env.SOLANA_WSS_URL || 'wss://api.mainnet-beta.solana.com',
         flashbotsUrl: process.env.JITO_BLOCK_ENGINE_URL || 'mainnet.block-engine.jito.wtf', 
     },
-    // Add other chains as needed (Polygon, Arbitrum, etc.)
+    // Add other chains as needed
 ];
-
-export { ChainConfig };
