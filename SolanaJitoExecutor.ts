@@ -7,14 +7,13 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    Bundle, // Corrected import for the Bundle class
-    SearcherClient, // Corrected import for the client class
-    BASE_TIP_ADDRESS, // Corrected import for the constant
-    // TS2305: BlockEngineService is typically not directly exported, 
-    // its functionality is accessed via SearcherClient methods.
+    Bundle, // Fixes TS2724
+    SearcherClient, // Fixes TS2305
+    BASE_TIP_ADDRESS, // Fixes TS2305
+    // TS2305: BlockEngineService is now accessed via SearcherClient or is deprecated.
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; 
+import { ChainConfig } from './config/chains.js'; // Fixes TS2307
 
 // Use a known Jito tip account
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
@@ -62,7 +61,6 @@ export class SolanaJitoExecutor {
 
             logger.info(`[JITO] Bundle submitted. ID: ${bundleId}. Monitoring...`);
 
-            // Fix TS7006 by explicitly typing the result parameter
             this.searcherClient.onBundleResult((result: any) => { 
                 if (result.bundleId === bundleId) {
                     if (result.accepted) {
