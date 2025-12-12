@@ -6,7 +6,7 @@ interface GeyserClient {}
 import { ChainConfig } from './config/chains.js'; 
 import { Strategy } from './config/strategies.js'; 
 import { logger } from './logger.js';
-import { EngineTaskData } from './types.js';
+import { EngineTaskData } from './types.js'; // Assuming types.js is in root
 
 export class SolanaGeyserClient {
     private client: GeyserClient;
