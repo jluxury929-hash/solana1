@@ -2,7 +2,7 @@
 
 import { FlashbotsBundleProvider, FlashbotsBundleResolution } from '@flashbots/ethers-provider-bundle';
 import { providers, Wallet } from 'ethers';
-// Imports type for TransactionRequest
+// FIX: Imports type for TransactionRequest
 import { TransactionRequest } from '@ethersproject/abstract-provider'; 
 import { logger } from './logger.js';
 import { ChainConfig } from './config/chains.js'; // FIX: Explicit .js extension (TS2307)
@@ -12,12 +12,33 @@ export class FlashbotsMEVExecutor {
     private walletSigner: Wallet;
     private flashbotsProvider: FlashbotsBundleProvider;
 
-    private constructor(/* ... */) {
-        // ...
+    private constructor(
+        provider: providers.JsonRpcProvider,
+        walletSigner: Wallet,
+        flashbotsProvider: FlashbotsBundleProvider
+    ) {
+        this.provider = provider;
+        this.walletSigner = walletSigner;
+        this.flashbotsProvider = flashbotsProvider;
     }
 
-    static async create(/* ... */): Promise<FlashbotsMEVExecutor> {
-        // ...
+    static async create(
+        walletPrivateKey: string,
+        authPrivateKey: string,
+        rpcUrl: string,
+        flashbotsUrl: string
+    ): Promise<FlashbotsMEVExecutor> {
+        const provider = new providers.JsonRpcProvider(rpcUrl);
+        const walletSigner = new Wallet(walletPrivateKey, provider);
+        const authSigner = new Wallet(authPrivateKey);
+
+        const flashbotsProvider = await FlashbotsBundleProvider.create(
+            provider,
+            authSigner,
+            flashbotsUrl
+        );
+
+        logger.info(`[EVM] Flashbots provider created for ${rpcUrl}`);
         return new FlashbotsMEVExecutor(provider, walletSigner, flashbotsProvider);
     }
 
@@ -25,7 +46,8 @@ export class FlashbotsMEVExecutor {
         signedTxs: string[], 
         blockNumber: number
     ): Promise<void> {
-        // ...
+        logger.info(`[Flashbots] Submitting bundle to block ${blockNumber}...`);
+
         try {
             const submission = await this.flashbotsProvider.sendRawBundle(
                 signedTxs, 
@@ -36,12 +58,12 @@ export class FlashbotsMEVExecutor {
             const resolution = await submission.wait(); 
 
             if (resolution === FlashbotsBundleResolution.BundleIncluded) {
-                // ...
+                logger.info(`[Flashbots SUCCESS] Bundle included in block ${blockNumber}.`);
             } else if (resolution === FlashbotsBundleResolution.BlockPassedWithoutInclusion) {
-                // ...
+                logger.warn(`[Flashbots FAIL] Bundle was not included.`);
             }
         } catch (error) {
-            // ...
+            logger.error(`[Flashbots] Bundle submission error.`, error);
         }
     }
 }
