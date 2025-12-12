@@ -7,9 +7,7 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    // FIX: Explicitly use 'bundle' to resolve TS2724
-    bundle as Bundle, 
-    // FIX: Using the correct, simple named exports
+    Bundle, 
     SearcherClient, 
     BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
@@ -39,7 +37,12 @@ export class SolanaJitoExecutor {
         solanaRpcUrl: string
     ): Promise<SolanaJitoExecutor> {
         const connection = new Connection(solanaRpcUrl, 'confirmed');
-        const searcherClient = new SearcherClient(jitoRelayUrl, walletKeypair);
+        
+        // FIX: Using the more robust constructor pattern for SearcherClient (TS2351 fix)
+        const searcherClient = new SearcherClient({ 
+            privateKey: walletKeypair.secretKey, 
+            baseEngineUrl: jitoRelayUrl 
+        });
 
         return new SolanaJitoExecutor(connection, walletKeypair, searcherClient);
     }
