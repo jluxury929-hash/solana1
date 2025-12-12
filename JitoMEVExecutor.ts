@@ -1,46 +1,30 @@
-// JitoMEVExecutor.ts (Assumed EVM Executor for Jito/MEV-Share)
+// JitoMEVExecutor.ts (Fixing the EVM/Solana Conflict)
 
-import { SearcherClient } from '@jito-labs/jito-ts'; // Assuming this provides the correct EVM client now
-import { providers, Wallet, TransactionRequest } from 'ethers';
+// REMOVE the conflicting Jito import:
+// import { SearcherClient } from '@jito-labs/jito-ts'; 
+// Use a placeholder or the actual EVM package if known (e.g., if you use the Flashbots provider for Jito EVM).
+
+import { providers, Wallet } from 'ethers';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
+import { ChainConfig } from './config/chains.js'; 
+
+// Replace the conflicting import with a placeholder or the correct service class.
+// For now, we will assume a generic client interface that uses standard ethers providers.
+
+interface JitoEVMClient {} // Placeholder for the actual EVM Jito client type
 
 export class JitoMEVExecutor {
-    private provider: providers.JsonRpcProvider;
-    private walletSigner: Wallet;
-    private searcherClient: SearcherClient; // Using SearcherClient instead of non-exported BlockEngineService
-
-    private constructor(
-        provider: providers.JsonRpcProvider,
-        walletSigner: Wallet,
-        searcherClient: SearcherClient
-    ) {
-        this.provider = provider;
-        this.walletSigner = walletSigner;
-        this.searcherClient = searcherClient;
-    }
-
-    static async create(
-        walletPrivateKey: string,
-        rpcUrl: string,
-        jitoRelayUrl: string
-    ): Promise<JitoMEVExecutor> {
-        const provider = new providers.JsonRpcProvider(rpcUrl);
-        const walletSigner = new Wallet(walletPrivateKey, provider);
-        
-        // This initialization may need adjustment based on the specific Jito EVM package version
-        const searcherClient = new SearcherClient(jitoRelayUrl, walletSigner as any); 
-
-        logger.info(`[EVM] Jito Executor created for ${rpcUrl}`);
-        return new JitoMEVExecutor(provider, walletSigner, searcherClient);
-    }
+    // ...
+    private searcherClient: JitoEVMClient; // Use the placeholder type
+    // ... 
     
-    // Placeholder method to avoid compilation errors
-    async sendBundle(
-        signedTxs: string[], 
-        blockNumber: number
-    ): Promise<void> {
-        logger.debug(`[JitoMEVExecutor] Placeholder bundle submission for block ${blockNumber}`);
-        // Actual submission logic goes here (e.g., using Jito's specific EVM endpoints)
+    // Inside create:
+    static async create(
+        // ...
+    ): Promise<JitoMEVExecutor> {
+        // ...
+        // Replace: const searcherClient = new SearcherClient(jitoRelayUrl, walletSigner as any); 
+        const searcherClient: JitoEVMClient = {} as JitoEVMClient; // Dummy client initialization
+        // ...
     }
 }
