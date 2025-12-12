@@ -1,28 +1,25 @@
 // index.ts
 
-import { ProductionMEVBot } from './src/ProductionMEVBot.js';
-import { logger } from './src/logger.js';
+import { ProductionMEVBot } from './ProductionMEVBot.js'; 
+import { logger } from './logger.js'; 
 
 async function main() {
-    logger.info("==================================================");
-    logger.info("   🚀 High-Performance Multi-Chain MEV Bot (v1.0)");
-    logger.info("==================================================");
+    logger.info("Starting High-Strategy MEV Bot...");
+    
+    // Check for required environment variables early
+    if (!process.env.PRIVATE_KEY) {
+        logger.fatal("PRIVATE_KEY environment variable is missing. Cannot proceed.");
+        return;
+    }
 
     try {
         const bot = new ProductionMEVBot();
         await bot.startMonitoring();
     } catch (error) {
-        logger.fatal("FATAL APPLICATION CRASH:", error);
-        process.exit(1);
+        logger.fatal("An unrecoverable error occurred during bot initialization.", error);
     }
 }
 
-main();
-
-// Handle graceful shutdown signals
-process.on('SIGINT', () => {
-    logger.warn('Received SIGINT. Shutting down gracefully...');
-    // In a real application, you would terminate the WorkerPool here:
-    // pool.terminate().finally(() => process.exit(0)); 
-    process.exit(0);
+main().catch(error => {
+    logger.fatal("Unhandled exception in main process.", error);
 });
