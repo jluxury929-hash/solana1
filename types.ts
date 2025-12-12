@@ -1,17 +1,16 @@
-// src/types.ts
+// types.ts
 
-// Assuming this file exists and is correctly defined
+// FIX: Added .js extension for local module resolution
 import { ChainConfig } from './config/chains.js'; 
 
 /**
- * Configuration for the Solana Bot. (Fixes TS2305 and TS2339 in SolanaMEVBot.ts)
+ * Configuration for the Solana Bot.
  */
 export interface BotConfig {
-    walletAddress: string; // <-- Added to resolve TS2339: Property 'walletAddress' does not exist
+    walletAddress: string;
     minSolBalance: number;
     jitoBlockEngineUrl: string;
     targetSwapProgramId: string;
-    // Add other necessary config properties used throughout the bot
 }
 
 /**
@@ -20,19 +19,17 @@ export interface BotConfig {
 export interface EngineTaskData {
     chainId: number;
     txHash: string;
-    // EVM transaction details
     pendingTx?: { 
         hash: string, 
         data: string | null, 
         to: string | null, 
         from: string | null;
-        signature?: string; // If signature is expected in StrategyEngine
+        signature?: string;
     };
     fees?: { 
         maxFeePerGas: string, 
         maxPriorityFeePerGas: string 
     };
-    // Added for Solana strategy execution
     targetSwapProgramId?: string; 
 }
 
@@ -47,4 +44,3 @@ export interface EngineResult {
     tipLamports?: number; 
     error?: string; 
 }
-// Note: We only use 'export interface' and avoid 'export { ... }' to fix TS2484.
