@@ -7,8 +7,8 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    // FIX: Trusting the compiler suggestion for Bundle, and using standard names
-    bundle as Bundle, 
+    // FIX: Using the constructor names that the class definitions expect
+    Bundle, 
     SearcherClient, 
     BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
@@ -39,7 +39,7 @@ export class SolanaJitoExecutor {
     ): Promise<SolanaJitoExecutor> {
         const connection = new Connection(solanaRpcUrl, 'confirmed');
         
-        // FIX for TS2351: Using the explicit constructor object pattern
+        // FIX for TS2351: Using the object pattern constructor, which forces the compiler to use the correct class definition.
         const searcherClient = new SearcherClient({ 
             privateKey: walletKeypair.secretKey, 
             baseEngineUrl: jitoRelayUrl 
@@ -53,7 +53,6 @@ export class SolanaJitoExecutor {
     ): Promise<void> {
         logger.info(`[JITO] Submitting bundle with ${transactions.length} transactions...`);
 
-        // FIX: The compiler suggested 'bundle' but the class must be named Bundle
         const bundle = new Bundle(transactions, JITO_TIP_ACCOUNT); 
         
         try {
