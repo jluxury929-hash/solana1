@@ -19,7 +19,11 @@
   "license": "ISC",
   "dependencies": {
     "@flashbots/ethers-provider-bundle": "^0.6.0",
-    "@jito-labs/jito-ts": "^2.1.0",
+    
+    // CRITICAL FIX FOR E404: Installing directly from Git repository
+    // REPLACE THE URL AND TAG WITH THE OFFICIAL JITO REPOSITORY AND DESIRED VERSION!
+    "@jito-labs/jito-ts": "git+https://github.com/jito-labs/jito-ts.git#main", 
+    
     "@solana/web3.js": "^1.91.0",
     "ethers": "^5.7.2",
     "log4js": "^6.9.1"
@@ -28,8 +32,5 @@
     "@types/log4js": "^2.3.5",
     "@types/node": "^20.11.24",
     "typescript": "^5.3.3"
-  },
-  "publishConfig": {
-    "@jito-labs:registry": "https://<JITO_SPECIFIC_REGISTRY_URL>" 
   }
 }
