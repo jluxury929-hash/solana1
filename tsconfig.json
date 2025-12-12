@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "CommonJS", // FIX 2: Use CommonJS module system
+    "moduleResolution": "Node", // FIX 2: Use stable Node resolution
     "target": "ES2022",
     "outDir": "./dist",
-    "rootDir": "./", // FIX: Use the container root as the source root
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,7 +12,6 @@
     "allowJs": true,
     "sourceMap": true
   },
-  // FIX: Look in all subdirectories, including src/
   "include": ["**/*.ts"], 
   "exclude": ["node_modules", "dist"]
 }
