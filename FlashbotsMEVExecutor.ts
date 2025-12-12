@@ -1,60 +1,74 @@
-// src/FlashbotsMEVExecutor.ts
+// FlashbotsMEVExecutor.ts
 
-import { FlashbotsBundleProvider } from '@flashbots/ethers-provider-bundle'; 
-import { ethers, Wallet, providers } from 'ethers';
+import { FlashbotsBundleProvider } from '@flashbots/ethers-provider-bundle';
+import { providers, Wallet, TransactionRequest, BigNumber } from 'ethers'; 
 import { logger } from './logger.js';
-
-export type MevBundle = Array<{ signedTransaction: string } | { hash: string }>;
+import { ChainConfig } from './config/chains'; // Removed .js extension
 
 export class FlashbotsMEVExecutor {
+    private provider: providers.JsonRpcProvider;
+    private walletSigner: Wallet;
+    private flashbotsProvider: FlashbotsBundleProvider;
+
     private constructor(
-        private provider: providers.JsonRpcProvider,
-        private flashbotsProvider: FlashbotsBundleProvider
-    ) {}
+        provider: providers.JsonRpcProvider,
+        walletSigner: Wallet,
+        flashbotsProvider: FlashbotsBundleProvider
+    ) {
+        this.provider = provider;
+        this.walletSigner = walletSigner;
+        this.flashbotsProvider = flashbotsProvider;
+    }
 
     static async create(
-        privateKey: string, 
-        authSignerKey: string,
+        walletPrivateKey: string,
+        authPrivateKey: string,
         rpcUrl: string,
         flashbotsUrl: string
     ): Promise<FlashbotsMEVExecutor> {
         const provider = new providers.JsonRpcProvider(rpcUrl);
-        const authSigner = new Wallet(authSignerKey);
+        const walletSigner = new Wallet(walletPrivateKey, provider);
+        const authSigner = new Wallet(authPrivateKey);
 
         const flashbotsProvider = await FlashbotsBundleProvider.create(
             provider,
             authSigner,
             flashbotsUrl
         );
-        return new FlashbotsMEVExecutor(provider, flashbotsProvider);
+
+        logger.info(`[EVM] Flashbots provider created for ${rpcUrl}`);
+        return new FlashbotsMEVExecutor(provider, walletSigner, flashbotsProvider);
     }
 
+    /**
+     * Sends a transaction bundle (array of signed transactions) to the Flashbots relay.
+     */
     async sendBundle(
-        bundle: MevBundle, 
+        signedTxs: string[], 
         blockNumber: number
     ): Promise<void> {
-        logger.info(`[Flashbots] Submitting bundle for block ${blockNumber}...`);
-        
+        logger.info(`[Flashbots] Submitting bundle to block ${blockNumber}...`);
+
         try {
-            const result = await this.flashbotsProvider.sendBundle(bundle as any, blockNumber);
-
-            if ('error' in result) {
-                logger.error(`[Flashbots] Bundle submission failed: ${result.error.message}`);
-                return;
-            }
-
-            logger.info(`[Flashbots] Bundle sent. Awaiting receipt...`);
+            const submission = await this.flashbotsProvider.sendRawBundle(
+                signedTxs, 
+                blockNumber
+            );
             
-            const waitResponse = await result.wait();
-            
-            if (waitResponse === 0) {
-                logger.warn(`[Flashbots] Bundle was not included in block ${blockNumber}.`);
+            logger.info(`[Flashbots] Bundle submitted. Waiting for inclusion...`);
+
+            const resolution = await submission.wait();
+
+            if (resolution === 0) {
+                logger.info(`[Flashbots SUCCESS] Bundle included in block ${blockNumber}.`);
+            } else if (resolution === 1) {
+                logger.warn(`[Flashbots FAIL] Bundle was not included.`);
             } else {
-                logger.info(`[Flashbots] Bundle successfully included in block ${blockNumber}!`);
+                logger.error(`[Flashbots FAIL] Bundle was canceled or encountered an error.`);
             }
 
         } catch (error) {
-            logger.error(`[Flashbots] Submission error.`, error);
+            logger.error(`[Flashbots] Bundle submission error.`, error);
         }
     }
 }
