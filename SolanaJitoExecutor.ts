@@ -7,10 +7,9 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    // FIX: Using 'bundle as Bundle' to bypass TS2724
-    bundle as Bundle, 
-    SearcherClient, 
-    BASE_TIP_ADDRESS, 
+    Bundle, // Should now be resolved
+    SearcherClient, // Should now be resolved
+    BASE_TIP_ADDRESS, // Should now be resolved
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
 import { ChainConfig } from './config/chains.js'; 
@@ -39,7 +38,7 @@ export class SolanaJitoExecutor {
     ): Promise<SolanaJitoExecutor> {
         const connection = new Connection(solanaRpcUrl, 'confirmed');
         
-        // Using the explicit constructor pattern
+        // FIX for TS2351: Using the explicit constructor pattern
         const searcherClient = new SearcherClient({ 
             privateKey: walletKeypair.secretKey, 
             baseEngineUrl: jitoRelayUrl 
