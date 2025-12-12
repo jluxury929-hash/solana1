@@ -1,7 +1,15 @@
-.git
-.gitignore
-.env
-.env.local
+# Dependencies and Build Outputs
 node_modules
 dist
-logs
+.git
+
+# Environment files (don't bake secrets into the image)
+.env
+.DS_Store
+npm-debug.log
+yarn-error.log
+
+# IDE/Editor files
+*.sublime-project
+*.code-workspace
+.vscode/
