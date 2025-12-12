@@ -23,7 +23,7 @@ RUN npm install
 # 4. Copy all source files and config (tsconfig.json) into the container's root working directory (/app)
 # Assumes all files are in the local root (per your previous statement).
 COPY tsconfig.json ./
-COPY . . 
+COPY . /app
 
 # 5. Build the TypeScript project (Do NOT remove this)
 RUN npm run build
