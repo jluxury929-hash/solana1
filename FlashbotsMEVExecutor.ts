@@ -1,9 +1,10 @@
 // FlashbotsMEVExecutor.ts
 
 import { FlashbotsBundleProvider } from '@flashbots/ethers-provider-bundle';
+// ethers is imported using standard node resolution; path mapping in tsconfig handles types
 import { providers, Wallet, TransactionRequest, BigNumber } from 'ethers'; 
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains'; // Removed .js extension
+import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
 
 export class FlashbotsMEVExecutor {
     private provider: providers.JsonRpcProvider;
