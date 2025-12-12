@@ -7,12 +7,14 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    Bundle, // Corrected export name
-    SearcherClient,
-    BASE_TIP_ADDRESS,
+    Bundle, // Corrected import for the Bundle class
+    SearcherClient, // Corrected import for the client class
+    BASE_TIP_ADDRESS, // Corrected import for the constant
+    // TS2305: BlockEngineService is typically not directly exported, 
+    // its functionality is accessed via SearcherClient methods.
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; // Ensure ChainConfig is available
+import { ChainConfig } from './config/chains.js'; 
 
 // Use a known Jito tip account
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
