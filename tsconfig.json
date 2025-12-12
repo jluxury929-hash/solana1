@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    /* Modules and Target */
+    "target": "ES2022",
+    "module": "NodeNext", 
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    
+    /* Output Directories */
+    "outDir": "./dist",
+    "rootDir": "./src",
+    
+    /* Strictness */
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": false,
+    
+    /* Code Emit */
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "isolatedModules": true, // Recommended for Worker Threads environment
+  },
+  "include": [
+    "src/**/*" // Include all files inside the src directory
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
