@@ -1,0 +1,70 @@
+// src/SolanaJitoExecutor.ts
+
+import {
+    Connection,
+    Keypair,
+    PublicKey,
+    VersionedTransaction,
+} from '@solana/web3.js';
+import {
+    Bundle,
+    SearcherClient,
+    BASE_TIP_ADDRESS,
+} from '@jito-labs/jito-ts';
+import { logger } from './logger.js';
+
+const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
+
+export class SolanaJitoExecutor {
+    private searcherClient: SearcherClient;
+    private connection: Connection;
+    private feePayer: Keypair;
+
+    constructor(
+        connection: Connection, 
+        feePayer: Keypair, 
+        searcherClient: SearcherClient
+    ) {
+        this.connection = connection;
+        this.feePayer = feePayer;
+        this.searcherClient = searcherClient;
+    }
+
+    static async create(
+        walletKeypair: Keypair, 
+        jitoRelayUrl: string,
+        solanaRpcUrl: string
+    ): Promise<SolanaJitoExecutor> {
+        const connection = new Connection(solanaRpcUrl, 'confirmed'); 
+        const searcherClient = new SearcherClient(jitoRelayUrl, walletKeypair);
+
+        return new SolanaJitoExecutor(connection, walletKeypair, searcherClient);
+    }
+
+    async sendBundle(
+        transactions: VersionedTransaction[], 
+    ): Promise<void> {
+        logger.info(`[JITO] Submitting bundle with ${transactions.length} transactions...`);
+
+        const bundle = new Bundle(transactions, JITO_TIP_ACCOUNT); 
+        
+        try {
+            const bundleId = await this.searcherClient.sendBundle(bundle);
+
+            logger.info(`[JITO] Bundle submitted. ID: ${bundleId}. Monitoring...`);
+
+            this.searcherClient.onBundleResult((result) => {
+                if (result.bundleId === bundleId) {
+                    if (result.accepted) {
+                        logger.info(`[JITO SUCCESS] Bundle included in slot: ${result.accepted.slot}`);
+                    } else if (result.rejected) {
+                        logger.warn(`[JITO REJECTED] Bundle rejected. Reason: ${result.rejected.reason}`);
+                    }
+                }
+            });
+
+        } catch (error) {
+            logger.error(`[JITO] Bundle submission error.`, error);
+        }
+    }
+}
