@@ -1,17 +1,29 @@
 {
   "compilerOptions": {
+    // ESSENTIAL FOR MODERN NODE.JS PROJECTS AND EXTERNAL MODULE RESOLUTION (Fixes TS2307 for ethers, flashbots)
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "ES2022",
+    
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "./", // Assumes all source (.ts) files are in the root directory
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    // Allows TypeScript to resolve imports from './src/file.js' correctly even though the file is .ts
-    "allowJs": true
+    "allowJs": true,
+
+    // CRITICAL FIX FOR LOCAL MODULE RESOLUTION (Fixes remaining TS2307 errors for local paths)
+    "baseUrl": ".", 
+    "paths": {
+      // Map the imports without the '.js' extension to the actual .ts files
+      "./config/chains": ["config/chains.ts"],
+      "./config/strategies": ["config/strategies.ts"],
+      "./logger": ["logger.ts"],
+      "./MempoolMonitor": ["MempoolMonitor.ts"],
+      // Add other root-level files that are imported by others if needed
+      "./types": ["types.ts"]
+    }
   },
-  // We assume all files are in the root context, so we include everything.
-  "include": ["**/*.ts", "**/*.js"], 
+  "include": ["**/*.ts"],  // Include all .ts files in the root and subdirectories
   "exclude": ["node_modules", "dist"] 
 }
