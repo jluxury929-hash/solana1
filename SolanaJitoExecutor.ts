@@ -7,14 +7,14 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    Bundle, // Corrected Jito Bundle class import (Fixes TS2724)
-    SearcherClient, // Corrected Jito SearcherClient class import (Fixes TS2305)
-    BASE_TIP_ADDRESS, // Corrected Jito constant import (Fixes TS2305)
+    // FIX: Using named exports that are most reliable (TS2724, TS2305)
+    Bundle, 
+    SearcherClient, 
+    BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
 import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
 
-// Use a known Jito tip account
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
 
 export class SolanaJitoExecutor {
@@ -32,9 +32,6 @@ export class SolanaJitoExecutor {
         this.searcherClient = searcherClient;
     }
 
-    /**
-     * Factory method to create an instance with connection initialization.
-     */
     static async create(
         walletKeypair: Keypair, 
         jitoRelayUrl: string,
@@ -46,10 +43,6 @@ export class SolanaJitoExecutor {
         return new SolanaJitoExecutor(connection, walletKeypair, searcherClient);
     }
 
-    /**
-     * Sends a Jito Bundle to the Block Engine.
-     * @param transactions - Array of signed VersionedTransaction objects.
-     */
     async sendBundle(
         transactions: VersionedTransaction[], 
     ): Promise<void> {
@@ -59,7 +52,6 @@ export class SolanaJitoExecutor {
         
         try {
             const bundleId = await this.searcherClient.sendBundle(bundle);
-
             logger.info(`[JITO] Bundle submitted. ID: ${bundleId}. Monitoring...`);
 
             this.searcherClient.onBundleResult((result: any) => { 
