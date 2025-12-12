@@ -23,5 +23,4 @@ export const CHAINS: ChainConfig[] = [
         wssUrl: process.env.SOLANA_WSS_URL || 'wss://api.mainnet-beta.solana.com',
         flashbotsUrl: process.env.JITO_BLOCK_ENGINE_URL || 'mainnet.block-engine.jito.wtf', 
     },
-    // Add other chains as needed
 ];
