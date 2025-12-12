@@ -9,6 +9,9 @@ WORKDIR /app
 # This is required because the '@jito-labs/jito-ts' dependency uses 'yarn run compile' 
 # in its 'prepare' script, causing the build to fail if 'yarn' is missing.
 
+# Fix for ENOENT: Missing 'git' executable for npm dependencies
+RUN apk add --no-cache git
+
 # 1. Copy only the package files to install dependencies (for effective caching)
 # This step relies on the .dockerignore file to exclude node_modules/
 COPY package*.json ./
