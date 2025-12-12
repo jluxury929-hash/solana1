@@ -7,12 +7,13 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    Bundle, // Corrected Jito Bundle class import
-    SearcherClient, // Corrected Jito SearcherClient class import
-    BASE_TIP_ADDRESS, // Corrected Jito constant import
+    Bundle, 
+    SearcherClient, 
+    BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; 
+// Removed .js extension to help with module resolution (TS2307)
+import { ChainConfig } from './config/chains'; 
 
 // Use a known Jito tip account
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
@@ -55,7 +56,6 @@ export class SolanaJitoExecutor {
     ): Promise<void> {
         logger.info(`[JITO] Submitting bundle with ${transactions.length} transactions...`);
 
-        // Use the Bundle constructor from Jito-ts
         const bundle = new Bundle(transactions, JITO_TIP_ACCOUNT); 
         
         try {
