@@ -1,13 +1,10 @@
 // config/strategies.ts
 
-/**
- * Defines the structure for a single MEV strategy configuration.
- */
 export interface Strategy {
     id: string;
     name: string;
     isActive: boolean;
-    profitThreshold: number; // e.g., in ETH or SOL
+    profitThreshold: number; 
     targetTokenAddress?: string;
 }
 
