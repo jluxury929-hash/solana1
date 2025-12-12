@@ -1,20 +1,23 @@
 // src/logger.ts
-import * as winston from 'winston';
 
-const { combine, timestamp, printf, colorize } = winston.format;
+/**
+ * Defines the logging interface used throughout the bot, ensuring
+ * consistency and type safety for all logging levels, including 'fatal'.
+ */
+export interface Logger {
+    info: (message: string, ...optionalParams: any[]) => void;
+    warn: (message: string, ...optionalParams: any[]) => void;
+    error: (message: string, ...optionalParams: any[]) => void;
+    fatal: (message: string, ...optionalParams: any[]) => void;
+}
 
-const logFormat = printf(({ level, message, timestamp, stack }) => {
-  return `${timestamp} [${level}]: ${message}${stack ? `\n${stack}` : ''}`;
-});
-
-export const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info', // Set in .env or defaults to 'info'
-  format: combine(
-    colorize({ all: true }),
-    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    logFormat
-  ),
-  transports: [
-    new winston.transports.Console(),
-  ],
-});
+export const logger: Logger = {
+    info: (msg, ...p) => console.log(`[INFO] ${new Date().toISOString()} ${msg}`, ...p),
+    warn: (msg, ...p) => console.warn(`[WARN] ${new Date().toISOString()} ${msg}`, ...p),
+    error: (msg, ...p) => console.error(`[ERROR] ${new Date().toISOString()} ${msg}`, ...p),
+    // Implementing 'fatal' to log and immediately terminate the process
+    fatal: (msg, ...p) => { 
+        console.error(`[FATAL] ${new Date().toISOString()} ${msg}`, ...p);
+        process.exit(1); 
+    },
+};
