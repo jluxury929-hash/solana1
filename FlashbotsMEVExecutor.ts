@@ -1,9 +1,11 @@
 // FlashbotsMEVExecutor.ts
 
-import { FlashbotsBundleProvider } from '@flashbots/ethers-provider-bundle';
-import { providers, Wallet, TransactionRequest, BigNumber } from 'ethers'; // FIX: Standard named imports
+import { FlashbotsBundleProvider, FlashbotsTransaction, FlashbotsBundleResolution } from '@flashbots/ethers-provider-bundle';
+import { providers, Wallet } from 'ethers';
+// FIX: TransactionRequest must often be imported from the abstract-provider package in ethers v5/v6 setups
+import { TransactionRequest } from '@ethersproject/abstract-provider'; 
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
+import { ChainConfig } from './config/chains.js'; // Ensure .js extension is used
 
 export class FlashbotsMEVExecutor {
     private provider: providers.JsonRpcProvider;
@@ -52,11 +54,12 @@ export class FlashbotsMEVExecutor {
                 blockNumber
             );
             
-            const resolution = await submission.wait();
+            // FIX for TS2339: Use the wait method on the submission response, not the transaction itself.
+            const resolution = await submission.wait(); 
 
-            if (resolution === 0) {
+            if (resolution === FlashbotsBundleResolution.BundleIncluded) {
                 logger.info(`[Flashbots SUCCESS] Bundle included in block ${blockNumber}.`);
-            } else if (resolution === 1) {
+            } else if (resolution === FlashbotsBundleResolution.BlockPassedWithoutInclusion) {
                 logger.warn(`[Flashbots FAIL] Bundle was not included.`);
             }
         } catch (error) {
