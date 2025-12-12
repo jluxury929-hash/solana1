@@ -9,8 +9,8 @@ import {
 import {
     // FIX: Corrected import pattern for Bundle class
     bundle as Bundle, 
-    SearcherClient, 
-    BASE_TIP_ADDRESS, 
+    SearcherClient, // FIX: Explicitly importing class
+    BASE_TIP_ADDRESS, // FIX: Explicitly importing constant
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
 import { ChainConfig } from './config/chains.js'; // FIX: Explicit .js extension
@@ -39,7 +39,7 @@ export class SolanaJitoExecutor {
     ): Promise<SolanaJitoExecutor> {
         const connection = new Connection(solanaRpcUrl, 'confirmed');
         
-        // FIX: Correct object pattern constructor call for SearcherClient
+        // FIX for TS2351: Correct object pattern constructor call for SearcherClient
         const searcherClient = new SearcherClient({ 
             privateKey: walletKeypair.secretKey, 
             baseEngineUrl: jitoRelayUrl 
