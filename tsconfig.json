@@ -11,10 +11,10 @@
     "skipLibCheck": true,
     "allowJs": true,
     
-    // CRITICAL FIX: BaseUrl and Paths to force-resolve stubborn packages
-    // This tells TypeScript where to find the type declarations for 'ethers' and the flashbots bundle.
-    "baseUrl": ".",
+    // CRITICAL FIX: BaseUrl and Paths to force-resolve stubborn external packages
+    "baseUrl": ".", 
     "paths": {
+      // These are crucial for fixing TS2307 for external EVM modules
       "ethers": ["./node_modules/ethers/lib/index.d.ts"],
       "@flashbots/ethers-provider-bundle": ["./node_modules/@flashbots/ethers-provider-bundle/dist/index.d.ts"]
     }
