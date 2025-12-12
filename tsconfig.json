@@ -1,26 +1,17 @@
 {
   "compilerOptions": {
-    // 1. Module Resolution Fix (Critical for Node/MEV projects using .js extensions)
     "module": "NodeNext",
-    "moduleResolution": "NodeNext", // This tells TS how to find .js and package exports
-    
-    // 2. Output and Target
-    "target": "ES2022", // Use a modern ECMAScript target
-    "outDir": "./dist", // Output directory for compiled JavaScript
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "outDir": "./dist",
     "rootDir": "./",
-    
-    // 3. Strictness and Interop
-    "strict": true, // Recommended for production code
-    "esModuleInterop": true, // Facilitates importing CommonJS as ES modules
+    "strict": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    
-    // 4. Library and Skip Checks (CRITICAL TS2307 Fix)
-    "skipLibCheck": true, // Fixes TS2307 for external libraries (ethers, flashbots) by ignoring their internal type declarations.
-    "allowJs": true, // Allows JavaScript files to be part of the project
-    
-    // 5. Source Map (Recommended for debugging)
+    "skipLibCheck": true, // CRITICAL: Bypasses TS2307 for external library types (ethers)
+    "allowJs": true,
     "sourceMap": true
   },
-  "include": ["**/*.ts"], // Include all TypeScript files in the project
-  "exclude": ["node_modules", "dist"] // Exclude these directories from compilation
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
