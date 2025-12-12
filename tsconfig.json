@@ -9,17 +9,15 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "rootDir": ".",    /* Correct: Source root is the current directory */
-
+    "rootDir": ".",    
     /* Type Checking */
     "noImplicitAny": true,
     "strictNullChecks": true,
-
     /* Other */
     "sourceMap": false
   },
   "include": [
-    "**/*.ts"          /* Correct: Includes all .ts files recursively from the root */
+    "**/*.ts"          
   ],
   "exclude": [
     "node_modules",
