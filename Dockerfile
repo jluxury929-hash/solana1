@@ -38,7 +38,6 @@ COPY --from=build /app/package.json ./package.json
 # 2. Copy the .env file
 # NOTE: For production, using secrets management (like Kubernetes Secrets or Vault)
 # and mounting the .env file as a volume is safer than baking it into the image.
-COPY .env ./.env
 
 # 3. Install production-only dependencies
 # --omit=dev ensures only necessary dependencies are installed, keeping the image small
