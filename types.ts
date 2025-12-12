@@ -1,53 +1,44 @@
 // src/types.ts
-import { VersionedTransaction } from '@solana/web3.js';
-import { ArbitragePath } from './config/strategies.js';
 
-// --- General Bot Configuration ---
+// Assuming these files exist in your config directory
+import { ChainConfig } from './config/chains.js'; 
+// Assuming a Strategy type exists for defining how to execute trades
+// import { Strategy } from './config/strategies.js'; 
 
-export interface BotConfig {
-    walletAddress: string;
-    minEthBalance: number;
-    // ... add other general config like maxGasPrice, maxTip
-}
-
-
-// --- Worker Task Data Types ---
-
-// Base interface for task data sent to the worker pool
-export interface BaseWorkerTask {
+/**
+ * Data passed from the main thread (Mempool Monitor) to the Worker Pool.
+ */
+export interface EngineTaskData {
     chainId: number;
-    accountData: string;
-    solanaKeypairSeed: Uint8Array;
-    strategyId: number;
-    strategyPath: string[];
-    slot: number;
+    txHash: string;
+    // EVM transaction details
+    pendingTx?: { 
+        hash: string, 
+        data: string | null, 
+        to: string | null, 
+        from: string | null 
+    };
+    // EVM fee details
+    fees?: { 
+        maxFeePerGas: string, 
+        maxPriorityFeePerGas: string 
+    };
+    // Add other necessary fields (e.g., Solana account data, market data)
 }
 
-// Interface for the structured result returned by the worker
-export interface WorkerResult {
-    netProfit: string; // The calculated profit
-    strategyId: number; 
-    // This is the signed bundle/transaction array, built by Rust/EVM logic
-    signedTransactions: VersionedTransaction[]; 
+/**
+ * Result returned from the Worker Pool after a strategy has been executed/simulated.
+ */
+export interface EngineResult {
+    netProfit: string;
+    strategyId: string;
+    // EVM: Signed raw transaction for the bundle
+    signedTransaction?: string; 
+    // Solana: Array of signed VersionedTransactions for the Jito Bundle
+    signedTransactions?: any[]; 
+    tipLamports?: number; // Solana tip amount
+    error?: string; // For failed attempts
 }
 
-
-// --- Worker Pool Management Types ---
-
-// A Promise resolver function
-export type TaskResolver = (result: WorkerResult | null) => void;
-
-// A wrapper for a task and its promise resolver
-export interface WorkerTaskWrapper {
-    task: BaseWorkerTask;
-    resolve: TaskResolver;
-}
-
-// Interface for worker thread statistics
-export interface WorkerStats {
-    totalWorkers: number;
-    busyWorkers: number;
-    idleWorkers: number;
-    pendingTasks: number;
-    activeTasks: number;
-}
+// Export the types needed by StrategyEngine.ts and others
+export { EngineTaskData, EngineResult };
