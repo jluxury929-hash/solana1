@@ -7,12 +7,14 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    Bundle,
+    Bundle, // Corrected export name
     SearcherClient,
     BASE_TIP_ADDRESS,
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
+import { ChainConfig } from './config/chains.js'; // Ensure ChainConfig is available
 
+// Use a known Jito tip account
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
 
 export class SolanaJitoExecutor {
@@ -35,17 +37,22 @@ export class SolanaJitoExecutor {
         jitoRelayUrl: string,
         solanaRpcUrl: string
     ): Promise<SolanaJitoExecutor> {
-        const connection = new Connection(solanaRpcUrl, 'confirmed'); 
+        const connection = new Connection(solanaRpcUrl, 'confirmed');
         const searcherClient = new SearcherClient(jitoRelayUrl, walletKeypair);
 
         return new SolanaJitoExecutor(connection, walletKeypair, searcherClient);
     }
 
+    /**
+     * Sends a Jito Bundle to the Block Engine.
+     * @param transactions - Array of signed VersionedTransaction objects.
+     */
     async sendBundle(
         transactions: VersionedTransaction[], 
     ): Promise<void> {
         logger.info(`[JITO] Submitting bundle with ${transactions.length} transactions...`);
 
+        // Use the Bundle constructor from Jito-ts
         const bundle = new Bundle(transactions, JITO_TIP_ACCOUNT); 
         
         try {
@@ -53,7 +60,8 @@ export class SolanaJitoExecutor {
 
             logger.info(`[JITO] Bundle submitted. ID: ${bundleId}. Monitoring...`);
 
-            this.searcherClient.onBundleResult((result) => {
+            // Fix TS7006 by explicitly typing the result parameter
+            this.searcherClient.onBundleResult((result: any) => { 
                 if (result.bundleId === bundleId) {
                     if (result.accepted) {
                         logger.info(`[JITO SUCCESS] Bundle included in slot: ${result.accepted.slot}`);
