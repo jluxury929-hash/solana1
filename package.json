@@ -21,13 +21,12 @@
     "@flashbots/ethers-provider-bundle": "^0.6.0",
     "@jito-labs/jito-ts": "^2.1.0",
     "@solana/web3.js": "^1.91.0",
-    "ethers": "^5.7.2", 
+    "ethers": "^5.7.2",
     "log4js": "^6.9.1"
-    // Other runtime packages like dotenv, etc., go here
   },
   "devDependencies": {
     "@types/log4js": "^2.3.5",
-    "@types/node": "^20.11.24", // CRITICAL: This fixes many underlying module resolution issues
+    "@types/node": "^20.11.24",
     "typescript": "^5.3.3"
   }
 }
