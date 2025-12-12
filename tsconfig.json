@@ -4,7 +4,7 @@
     "moduleResolution": "NodeNext",
     "target": "ES2022",
     "outDir": "./dist",
-    "rootDir": "./src", // CRITICAL FIX: Tells TSC where the source code starts
+    "rootDir": "./src", 
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,6 +12,6 @@
     "allowJs": true,
     "sourceMap": true
   },
-  "include": ["src/**/*.ts"], // CRITICAL FIX: Only include .ts files inside src/
+  "include": ["src/**/*.ts"], 
   "exclude": ["node_modules", "dist"]
 }
