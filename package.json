@@ -19,8 +19,9 @@
   "license": "ISC",
   "dependencies": {
     "@flashbots/ethers-provider-bundle": "^0.6.0",
+    
     "@jito-labs/jito-ts": "git+https://github.com/jito-labs/jito-ts.git#main", 
-  },
+    
     "@solana/web3.js": "^1.91.0",
     "ethers": "^5.7.2",
     "log4js": "^6.9.1"
