@@ -7,13 +7,12 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    Bundle, 
-    SearcherClient, 
-    BASE_TIP_ADDRESS, 
+    Bundle, // Corrected Jito Bundle class import (Fixes TS2724)
+    SearcherClient, // Corrected Jito SearcherClient class import (Fixes TS2305)
+    BASE_TIP_ADDRESS, // Corrected Jito constant import (Fixes TS2305)
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-// Removed .js extension to help with module resolution (TS2307)
-import { ChainConfig } from './config/chains'; 
+import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
 
 // Use a known Jito tip account
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
