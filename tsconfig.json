@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    // 1. Module Resolution Fix (Critical for Node/MEV projects)
+    // 1. Module Resolution Fix (Critical for Node/MEV projects using .js extensions)
     "module": "NodeNext",
     "moduleResolution": "NodeNext", // This tells TS how to find .js and package exports
     
