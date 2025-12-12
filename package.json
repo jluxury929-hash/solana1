@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "tsc",
+    "build": "tsc", // Keep this simple
     "start": "node dist/index.js",
     "dev": "npm run build && npm run start"
   },
@@ -19,7 +19,8 @@
   "license": "ISC",
   "dependencies": {
     "@flashbots/ethers-provider-bundle": "^0.6.0",
-    "@jito-labs/jito-ts": "git+https://github.com/jito-labs/jito-ts.git#master",
+    // FIX 1: Reverting to NPM version. If this is a private package, you MUST have an .npmrc file!
+    "@jito-labs/jito-ts": "^2.1.0", 
     "@solana/web3.js": "^1.91.0",
     "ethers": "^5.7.2",
     "log4js": "^6.9.1"
