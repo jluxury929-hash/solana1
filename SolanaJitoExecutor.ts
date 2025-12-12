@@ -1,4 +1,4 @@
-// SolanaJitoExecutor.ts (Fixing Jito Conflicts)
+// SolanaJitoExecutor.ts
 
 import {
     Connection,
@@ -7,14 +7,12 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    // FIX: Using 'bundle as Bundle' to bypass TS2724
-    bundle as Bundle, 
-    // Reverting to standard named imports for the remaining exports
+    bundle as Bundle, // FIX: Using 'bundle as Bundle' to bypass TS2724
     SearcherClient, 
     BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; 
+import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
 
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
 
@@ -40,7 +38,7 @@ export class SolanaJitoExecutor {
     ): Promise<SolanaJitoExecutor> {
         const connection = new Connection(solanaRpcUrl, 'confirmed');
         
-        // Using the explicit constructor pattern for SearcherClient
+        // FIX for TS2351: Using the explicit constructor object pattern
         const searcherClient = new SearcherClient({ 
             privateKey: walletKeypair.secretKey, 
             baseEngineUrl: jitoRelayUrl 
