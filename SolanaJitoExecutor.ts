@@ -1,4 +1,4 @@
-// src/SolanaJitoExecutor.ts
+// SolanaJitoExecutor.ts
 
 import {
     Connection,
@@ -7,13 +7,12 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    Bundle, // Fixes TS2724
-    SearcherClient, // Fixes TS2305
-    BASE_TIP_ADDRESS, // Fixes TS2305
-    // TS2305: BlockEngineService is now accessed via SearcherClient or is deprecated.
+    Bundle, // Corrected Jito Bundle class import
+    SearcherClient, // Corrected Jito SearcherClient class import
+    BASE_TIP_ADDRESS, // Corrected Jito constant import
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; // Fixes TS2307
+import { ChainConfig } from './config/chains.js'; 
 
 // Use a known Jito tip account
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
@@ -33,6 +32,9 @@ export class SolanaJitoExecutor {
         this.searcherClient = searcherClient;
     }
 
+    /**
+     * Factory method to create an instance with connection initialization.
+     */
     static async create(
         walletKeypair: Keypair, 
         jitoRelayUrl: string,
