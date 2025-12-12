@@ -1,7 +1,6 @@
 // FlashbotsMEVExecutor.ts
 
 import { FlashbotsBundleProvider } from '@flashbots/ethers-provider-bundle';
-// ethers is imported using standard node resolution; path mapping in tsconfig handles types
 import { providers, Wallet, TransactionRequest, BigNumber } from 'ethers'; 
 import { logger } from './logger.js';
 import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
@@ -41,9 +40,6 @@ export class FlashbotsMEVExecutor {
         return new FlashbotsMEVExecutor(provider, walletSigner, flashbotsProvider);
     }
 
-    /**
-     * Sends a transaction bundle (array of signed transactions) to the Flashbots relay.
-     */
     async sendBundle(
         signedTxs: string[], 
         blockNumber: number
@@ -56,18 +52,13 @@ export class FlashbotsMEVExecutor {
                 blockNumber
             );
             
-            logger.info(`[Flashbots] Bundle submitted. Waiting for inclusion...`);
-
             const resolution = await submission.wait();
 
             if (resolution === 0) {
                 logger.info(`[Flashbots SUCCESS] Bundle included in block ${blockNumber}.`);
             } else if (resolution === 1) {
                 logger.warn(`[Flashbots FAIL] Bundle was not included.`);
-            } else {
-                logger.error(`[Flashbots FAIL] Bundle was canceled or encountered an error.`);
             }
-
         } catch (error) {
             logger.error(`[Flashbots] Bundle submission error.`, error);
         }
