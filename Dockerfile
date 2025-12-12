@@ -1,52 +1,57 @@
-# Stage 1: Build the application
-# Use a secure and common Node.js base image
-FROM node:18-alpine AS build
+# ------------------------------------
+# 1. BUILD STAGE: Installs dependencies and compiles TypeScript
+# ------------------------------------
+FROM docker.io/library/node:18-alpine AS build
 
-# Set the working directory inside the container
+# Set the working directory for all subsequent commands
 WORKDIR /app
 
-# --- CRITICAL FIX: Install Yarn Globally ---
-# This is required because the '@jito-labs/jito-ts' dependency uses 'yarn run compile' 
-# in its 'prepare' script, causing the build to fail if 'yarn' is missing.
+# The base image (node:18-alpine) usually has yarn, 
+# so we remove the redundant 'RUN npm install -g yarn' step.
 
-# Fix for ENOENT: Missing 'git' executable for npm dependencies
+# Copy package files first to leverage Docker layer caching.
+# This ensures 'npm install' only reruns if package.json changes.
+COPY package.json package-lock.json ./
+
+# Install Git (FIX for 'ENOENT: syscall spawn git' error)
+# One or more of your npm packages needs 'git' during installation.
 RUN apk add --no-cache git
 
-# 1. Copy only the package files to install dependencies (for effective caching)
-# This step relies on the .dockerignore file to exclude node_modules/
-COPY package*.json ./
-
-# 2. Install project dependencies
+# Install Node.js dependencies
 RUN npm install
 
-# 3. Copy the rest of the source code
-COPY . .
+# Copy all source files into the container
+# (FIX for 'TS18003: No inputs were found' error)
+COPY src ./src
+COPY tsconfig.json ./
 
-# 4. Compile the TypeScript code into JavaScript (npm run build)
+# Build the TypeScript project
+# This compiles .ts files in /app/src into .js files in /app/dist
 RUN npm run build
 
 
-# Stage 2: Final (smaller) runtime image
-# Use a minimal node image for smaller deployment size
-FROM node:18-alpine
+# ------------------------------------
+# 2. PRODUCTION STAGE: Creates a minimal image for running the bot
+# ------------------------------------
+FROM docker.io/library/node:18-alpine AS production
 
-# Set the working directory
+# Set environment variables for production
+ENV NODE_ENV=production
+
+# Set the working directory for the final running process
 WORKDIR /app
 
-# 1. Copy the compiled code and package files from the build stage
-COPY --from=build /app/dist ./dist
+# Only copy the essential files needed at runtime:
+# 1. package.json (for start command)
+# 2. node_modules (pre-installed dependencies)
+# 3. The compiled JavaScript code (.js files in /dist)
 COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
 
-# 2. Copy the .env file
-# NOTE: For production, using secrets management (like Kubernetes Secrets or Vault)
-# and mounting the .env file as a volume is safer than baking it into the image.
+# NOTE: The .env file must NOT be copied here. 
+# Secrets (like private keys and RPC URLs) should be passed 
+# as environment variables when running the container (e.g., using -e or Docker Secrets).
 
-# 3. Install production-only dependencies
-# --omit=dev ensures only necessary dependencies are installed, keeping the image small
-RUN npm install --omit=dev
-
-# 4. Expose the port used by the optional API server
-EXPOSE 8080
-
-# 5. Set the default command to start the bot
-CMD ["npm", "run", "start"]
+# Command to run the bot when the container starts
+CMD ["node", "./dist/index.js"]
