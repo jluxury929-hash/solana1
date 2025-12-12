@@ -1,83 +1,31 @@
-// src/SolanaMEVBot.ts
+// src/SolanaMEVBot.ts (Snippet demonstrating error resolution)
 
-import { Keypair, Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import * as dotenv from 'dotenv';
-import { logger } from './logger.js'; 
-import { BotConfig } from './types.js'; 
-import { JitoMEVExecutor } from './JitoMEVExecutor.js'; 
-import { MempoolMonitor } from './MempoolMonitor.js';
+import { PublicKey } from '@solana/web3.js';
+import { BotConfig } from './types.js'; // <-- Needed for BotConfig type
+import { logger } from './logger.js';
+// ... other imports
 
-export class SolanaMEVBot {	
-	private connection: Connection;
-	private keypair: Keypair;
-	private executor: JitoMEVExecutor | undefined;
-	private monitor: MempoolMonitor | undefined;
-	private config: BotConfig;
-	
-	constructor() {
-		dotenv.config();
+// Assuming you have a function like this that takes a config
+function initialize(botConfig: BotConfig) {
+    // FIX for TS2339: Property 'walletAddress' does not exist on type 'BotConfig'
+    logger.info(`Initializing bot with wallet: ${botConfig.walletAddress}`);
 
-		const privateKeyBase58 = process.env.WALLET_PRIVATE_KEY;
-		const rpcUrl = process.env.SOLANA_RPC_URL;
-		const jitoUrl = process.env.JITO_BLOCK_ENGINE_URL;
-		const targetId = process.env.TARGET_SWAP_PROGRAM_ID;
-		
-		if (!privateKeyBase58 || !rpcUrl || !jitoUrl || !targetId) {
-			logger.error("Missing critical environment variables. Exiting.");
-             process.exit(1);
-		}
+    // FIX for TS2322: Type 'PublicKey' is not assignable to type 'string'.
+    // FIX for TS2769: Overload matches this call (Buffer.from(string, 'base58'))
+    
+    // Correct way to get the wallet address as a PublicKey
+    const walletPubkey: PublicKey = new PublicKey(botConfig.walletAddress);
 
-        try {
-            this.keypair = Keypair.fromSecretKey(new Uint8Array(Buffer.from(privateKeyBase58, 'base58')));
-            this.config = {
-                walletAddress: this.keypair.publicKey,
-                minSolBalance: parseFloat(process.env.MIN_SOL_BALANCE || '0.05'),	
-                minProfitUSD: parseFloat(process.env.MIN_PROFIT_USD || '5.00'),
-                targetSwapProgramId: new PublicKey(targetId),
-                jitoBlockEngineUrl: jitoUrl,
-            };
-        } catch (error) {
-            logger.error("Invalid WALLET_PRIVATE_KEY or TARGET_SWAP_PROGRAM_ID format.", error);
-            process.exit(1);
-        }
-		
-		this.connection = new Connection(rpcUrl, 'confirmed');	
-		logger.info("Bot configuration loaded.");
-	}
+    // If you need the address as a string later, use .toBase58():
+    const walletString: string = walletPubkey.toBase58(); 
 
-	private async checkBalance(): Promise<void> {
-        try {
-            const balanceLamports = await this.connection.getBalance(this.config.walletAddress);
-            const balanceSOL = balanceLamports / LAMPORTS_PER_SOL;	
-            logger.info(`[BALANCE] Current SOL Balance: ${balanceSOL} SOL`);
-
-            if (balanceSOL < this.config.minSolBalance) { 
-                logger.error(`Balance (${balanceSOL.toFixed(2)} SOL) is below MIN_SOL_BALANCE (${this.config.minSolBalance}). Shutting down.`);
-                process.exit(1);
-            }
-
-        } catch (error) {
-            logger.error("Could not check balance. Check SOLANA_RPC_URL.", error);
-            process.exit(1);
-        }
-    }
-
-
-	public async startMonitoring(): Promise<void> {
-		logger.info("[STATUS] Starting bot services...");
-
-        await this.checkBalance();
-        
-        // Initialize Jito Executor
-        this.executor = new JitoMEVExecutor(this.config.jitoBlockEngineUrl, this.keypair);
-
-        // Initialize Mempool Monitor
-        this.monitor = new MempoolMonitor(
-            this.connection.rpcEndpoint,
-            this.config.targetSwapProgramId,
-            this.executor
-        );
-        
-        logger.info("[STATUS] Monitoring fully active.");
-	}
+    // If you need to convert a base58 string to a buffer for transaction parsing 
+    // without relying on Node's limited encodings, you'd typically use a dedicated library 
+    // like 'bs58' or the Solana Web3.js internal decoding where applicable, 
+    // or ensure you only call Buffer.from() on a non-null value.
+    // Example of fixing the Buffer conversion logic:
+    // const txDataString: string | null = getSomeBase58Data();
+    // if (txDataString) {
+    //     const bufferData = Buffer.from(txDataString, 'hex'); // Assuming the data is hex, if it's base58, use bs58.decode()
+    // }
 }
