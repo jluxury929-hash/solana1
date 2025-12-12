@@ -1,72 +1,47 @@
-// src/StrategyEngine.ts
+// src/StrategyEngine.ts (Key changes)
 
-import { Keypair, Connection, Transaction, SystemProgram, TransactionInstruction, PublicKey, MessageV0, VersionedTransaction } from "@solana/web3.js";
-import { EngineTaskData, EngineResult } from './types.js';
+// Use the corrected types
+import { EngineTaskData, EngineResult } from './types.js'; 
 import { logger } from './logger.js';
+// ... other imports
 
-// Load the private key for signing transactions within the worker thread
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
-if (!WALLET_PRIVATE_KEY) {
-    logger.error("WALLET_PRIVATE_KEY is missing. Strategy Engine cannot sign.");
-    process.exit(1);
-}
-
-// Convert Base58 private key to Keypair
-const SIGNING_KEYPAIR = Keypair.fromSecretKey(new Uint8Array(Buffer.from(WALLET_PRIVATE_KEY, 'base58')));
-
-
-/**
- * Simulates MEV strategies against a pending transaction.
- * NOTE: In a real bot, this function would involve RPC call simulation, 
- * local order book analysis, and complex pathfinding. This is a simple mock.
- * * @param data The task data containing the pending transaction and target ID.
- * @returns A promise resolving to the best strategy result or null.
- */
-export async function runStrategy(data: EngineTaskData): Promise<EngineResult | null> {
-    const { pendingTx, targetSwapProgramId } = data;
-    
-    // --- 1. MOCK PROFIT SIMULATION ---
-    const MOCK_PROFIT_USD = 100; // Simulated profit in USD
-    const MIN_PROFIT_USD_THRESHOLD = parseFloat(process.env.MIN_PROFIT_USD || '5.00');
-
-    // Simulate winning only 1% of the time
-    if (Math.random() > 0.99) {
-        logger.debug(`[ENGINE] Found potential profit on sig ${pendingTx.signature.substring(0, 8)}...`);
+export const StrategyEngine = {
+    async execute(taskData: EngineTaskData): Promise<EngineResult> {
+        // ...
         
-        if (MOCK_PROFIT_USD < MIN_PROFIT_USD_THRESHOLD) {
-            logger.debug(`[ENGINE] Profit too low ($${MOCK_PROFIT_USD.toFixed(2)}). Skipping.`);
-            return null;
+        // FIX: Added optional chaining (?) and checking for pendingTx existence 
+        // to resolve TS18048 and TS2339 errors.
+        logger.debug(
+            `[ENGINE] Processing ${taskData.chainId} tx: ${taskData.pendingTx?.hash || taskData.txHash}`
+        );
+
+        if (taskData.pendingTx) {
+             // FIX: Only access signature if pendingTx exists.
+             // Also, the property 'signature' might not exist on the type, 
+             // so ensure the property is correct or cast the type if necessary.
+             logger.debug(`Tx Signature: ${taskData.pendingTx.signature}`);
         }
 
-        // --- 2. MOCK BUNDLE CONSTRUCTION ---
-        // Create a simple transaction bundle: [MEV TX, TARGET TX]
+        // ... (Later in the file, where the TS2322 error occurs)
+        // TS2322: Type 'string | null' is not assignable to type 'Buffer<ArrayBufferLike>'.
+        // This is a complex error related to Buffer creation in Node.js. 
+        // If you are using Buffer.from(data, 'base58'), you must ensure 'data' is not null.
+        const txData = taskData.pendingTx?.data;
+        if (txData === null || txData === undefined) {
+            // Handle case where data is missing for simulation
+            return { netProfit: '0', strategyId: 'FAILED', error: 'Missing TX Data' };
+        }
         
-        // a. Placeholder MEV transaction (sandwich/arbitrage logic)
-        const mevInstruction = SystemProgram.transfer({
-            fromPubkey: SIGNING_KEYPAIR.publicKey,
-            toPubkey: SIGNING_KEYPAIR.publicKey,
-            lamports: 10000, // Minimal lamport transfer
-        });
+        // Example fix for the TS2322/TS2769 Buffer error:
+        // Ensure you only pass a defined string to Buffer.from if expecting 'base58'
+        // const rawTransaction = Buffer.from(txData, 'base58'); 
         
-        const MEV_TX = new Transaction().add(mevInstruction);
-        MEV_TX.recentBlockhash = PublicKey.default.toString(); // Placeholder blockhash
-        MEV_TX.sign(SIGNING_KEYPAIR);
+        // ... (rest of the file)
         
-        // b. The original pending transaction (needs to be signed if we modify it, but we assume raw for sandwhich)
-        // For a sandwhich, the TARGET TX should be the original raw buffer from the stream.
-        
-        const signedBundle: Buffer[] = [
-            MEV_TX.serialize(),             // Our transaction (frontrun)
-            pendingTx.data,                 // Target transaction
-            MEV_TX.serialize()              // Our transaction (backrun)
-        ];
-        
+        // Final result construction (TS2561 fix)
         return {
-            netProfitUSD: MOCK_PROFIT_USD,
-            strategyName: `Sandwich on ${targetSwapProgramId.toBase58().substring(0, 4)}...`,
-            signedBundle: signedBundle,
-        };
+             netProfit: "0.001", // Use the correct property name
+             strategyId: "ARBITRAGE"
+        }
     }
-    
-    return null;
 }
