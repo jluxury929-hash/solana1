@@ -7,8 +7,9 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    // FIX: Using named exports that are most reliable (TS2724, TS2305)
-    Bundle, 
+    // FIX: Explicitly use 'bundle' to resolve TS2724
+    bundle as Bundle, 
+    // FIX: Using the correct, simple named exports
     SearcherClient, 
     BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
