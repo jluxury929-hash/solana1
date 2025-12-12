@@ -7,12 +7,13 @@ import {
     VersionedTransaction,
 } from '@solana/web3.js';
 import {
-    Bundle, // Should now be resolved
-    SearcherClient, // Should now be resolved
-    BASE_TIP_ADDRESS, // Should now be resolved
+    // FIX: Use 'bundle' and rename it to 'Bundle' (TS2724 fix)
+    bundle as Bundle, 
+    SearcherClient, 
+    BASE_TIP_ADDRESS, 
 } from '@jito-labs/jito-ts';
 import { logger } from './logger.js';
-import { ChainConfig } from './config/chains.js'; 
+import { ChainConfig } from './config/chains.js'; // FIX: Added .js extension
 
 const JITO_TIP_ACCOUNT = new PublicKey(BASE_TIP_ADDRESS); 
 
@@ -38,7 +39,7 @@ export class SolanaJitoExecutor {
     ): Promise<SolanaJitoExecutor> {
         const connection = new Connection(solanaRpcUrl, 'confirmed');
         
-        // FIX for TS2351: Using the explicit constructor pattern
+        // FIX: Using the explicit constructor pattern that resolved TS2351
         const searcherClient = new SearcherClient({ 
             privateKey: walletKeypair.secretKey, 
             baseEngineUrl: jitoRelayUrl 
