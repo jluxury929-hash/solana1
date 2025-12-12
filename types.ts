@@ -1,8 +1,8 @@
-// src/types.ts
+// src/types.ts (Updated)
 
-// Assuming these files exist in your config directory
+// Ensure all external types used are imported or defined (TS2307)
 import { ChainConfig } from './config/chains.js'; 
-// Assuming a Strategy type exists for defining how to execute trades
+// Assuming a strategy definition exists:
 // import { Strategy } from './config/strategies.js'; 
 
 /**
@@ -16,14 +16,17 @@ export interface EngineTaskData {
         hash: string, 
         data: string | null, 
         to: string | null, 
-        from: string | null 
+        from: string | null;
+        // The property 'signature' does not exist on this type (StrategyEngine.ts(34,74))
+        // If your strategy needs a signature, add it here:
+        signature?: string; 
     };
-    // EVM fee details
     fees?: { 
         maxFeePerGas: string, 
         maxPriorityFeePerGas: string 
     };
-    // Add other necessary fields (e.g., Solana account data, market data)
+    // Added to resolve TS2339 in StrategyEngine.ts
+    targetSwapProgramId?: string; 
 }
 
 /**
@@ -32,13 +35,23 @@ export interface EngineTaskData {
 export interface EngineResult {
     netProfit: string;
     strategyId: string;
-    // EVM: Signed raw transaction for the bundle
     signedTransaction?: string; 
-    // Solana: Array of signed VersionedTransactions for the Jito Bundle
     signedTransactions?: any[]; 
-    tipLamports?: number; // Solana tip amount
-    error?: string; // For failed attempts
+    tipLamports?: number; 
+    error?: string; 
+    // Removed 'netProfitUSD' to resolve TS2561, as it wasn't in the original interface definition.
 }
 
-// Export the types needed by StrategyEngine.ts and others
-export { EngineTaskData, EngineResult };
+/**
+ * Configuration for the Solana Bot. (TS2305: Missing BotConfig)
+ */
+export interface BotConfig {
+    // Add properties used in SolanaMEVBot.ts to resolve TS2339 errors
+    minSolBalance: number;
+    jitoBlockEngineUrl: string;
+    targetSwapProgramId: string;
+    // ... add any other configuration properties used
+}
+
+// REMOVED: export { EngineTaskData, EngineResult }; 
+// The 'export interface' lines above are sufficient and resolve TS2484.
